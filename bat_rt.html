@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>Metrics</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.29.1"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment@1.0.0"></script>
+
+    <style>
+        .chart-container {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .chart-item {
+            flex: 1 1 30%;
+            padding: 10px;
+        }
+
+        table {
+            width: 80%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+    
+</head>
+<body>
+
+    <h1>Metrics</h1>
+    <div id="metrics"></div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Salle</th>
+                <th>Température Minimum (°C)</th>
+                <th>Température Maximum (°C)</th>
+                <th>Température Moyenne (°C)</th>
+                <th>Humidité Minimum (%)</th>
+                <th>Humidité Maximum (%)</th>
+                <th>Humidité Moyenne (%)</th>
+                <th>CO2 Minimum (ppm)</th>
+                <th>CO2 Maximum (ppm)</th>
+                <th>CO2 Moyenne (ppm)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>E001</td>
+                <td id="temp_min_E001"></td>
+                <td id="temp_max_E001"></td>
+                <td id="temp_moy_E001"></td>
+                <td id="hum_min_E001"></td>
+                <td id="hum_max_E001"></td>
+                <td id="hum_moy_E001"></td>
+                <td id="co2_min_E001"></td>
+                <td id="co2_max_E001"></td>
+                <td id="co2_moy_E001"></td>
+            </tr>
+            <tr>
+                <td>E007</td>
+                <td id="temp_min_E007"></td>
+                <td id="temp_max_E007"></td>
+                <td id="temp_moy_E007"></td>
+                <td id="hum_min_E007"></td>
+                <td id="hum_max_E007"></td>
+                <td id="hum_moy_E007"></td>
+                <td id="co2_min_E007"></td>
+                <td id="co2_max_E007"></td>
+                <td id="co2_moy_E007"></td>
+            </tr>
+        </tbody>
+    </table>
+
+
+
+ 
+    <h2>Salle E001</h2>
+    <div class="chart-container">
+        <div class="chart-item">
+            <canvas id="temp_E001" width="50vh" height="50vh"></canvas>
+        </div>
+        <div class="chart-item">
+            <canvas id="hum_E001" width="50vh" height="50vh"></canvas>
+        </div>
+        <div class="chart-item">
+            <canvas id="co2_E001" width="50vh" height="50vh"></canvas>
+        </div>
+    </div>
+
+    <h2>Salle E007</h2>
+    <div class="chart-container">
+        <div class="chart-item">
+            <canvas id="temp_E007" width="50vh" height="50vh"></canvas>
+        </div>
+        <div class="chart-item">
+            <canvas id="hum_E007" width="50vh" height="50vh"></canvas>
+        </div>
+        <div class="chart-item">
+            <canvas id="co2_E007" width="50vh" height="50vh"></canvas>
+        </div>
+    </div>
+
+
+    <script src="charts.js"></script>
+    <!-- <script src="search.js"></script> -->
+
+</body>
+</html>
