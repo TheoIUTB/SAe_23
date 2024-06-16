@@ -10,16 +10,15 @@ session_start();
     <meta name="author" content="MD" />
     <meta name="description" content="Accueil site" />
     <meta name="keywords" content="Accueil" />
-    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="styles/styles.css">
 </head>
 <body>
 <header>
     <nav>
         <ul>
             <li><div class="item"><a href="index.php">Accueil</a></div></li>
-            <li><div class="item"><a href="pres_sae.html">Gestion de projet</a></div></li>
+            <li><div class="item"><a href="pres_sae.php">Gestion de projet</a></div></li>
 	    	<li><div class="item"><a href="consultation.php">Consultation</a></div></li>
-	    	<li><div class="item"><a href="CDC.php">Cahier des charges</a></div></li>
 			<li><div class="item"><a href="batiment1.php">R&T</a></div></li>
             <li><div class="item"><a href="batiment2.php">GIM</a></div></li>
             <?php if (isset($_SESSION['role'])): ?>
@@ -37,7 +36,7 @@ session_start();
     <div class="choix2">
         <h1>Ressources de cette SAÉ</h1>
         <a href="CDC.php" class="a"><h3>Cahier des charges</h3></a>
-        <a href="pres_sae.html" class="a"><h3>Gestion de projet</h3></a>
+        <a href="pres_sae.php" class="a"><h3>Gestion de projet</h3></a>
     </div>
     <div class="choix2">
         <h1>Choisir entre les bâtiments :</h1><br>

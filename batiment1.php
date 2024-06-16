@@ -49,16 +49,9 @@ session_start();
             <li><div class="item"><a href="index.php">Accueil</a></div></li>
             <li><div class="item"><a href="pres_sae.php">Gestion de projet</a></div></li>
 	    	<li><div class="item"><a href="consultation.php">Consultation</a></div></li>
-	    	<li><div class="item"><a href="CDC.php">Cahier des charges</a></div></li>
 			<li><div class="item"><a href="batiment1.php">R&T</a></div></li>
             <li><div class="item"><a href="batiment2.php">GIM</a></div></li>
             <?php if (isset($_SESSION['role'])): ?>
-                <?php if ($_SESSION['role'] == 'administrateur' || $_SESSION['role'] == 'gestionnaire1'): ?>
-                    <li><div class="item"><a href="batiment1.php">R&T</a></div></li>
-                <?php endif; ?>
-                <?php if ($_SESSION['role'] == 'administrateur' || $_SESSION['role'] == 'gestionnaire2'): ?>
-                    <li><div class="item"><a href="batiment2.php">GIM</a></div></li>
-                <?php endif; ?>
                 <?php if ($_SESSION['role'] == 'administrateur'): ?>
                     <li><div class="item"><a href="index2.php">AJout/Supp</a></div></li>
                 <?php endif; ?>
@@ -71,90 +64,82 @@ session_start();
 </header>
 <h1 class="rt">Bâtiment R&T</h1>
 <table>
-        <thead>
-            <tr>
-                <th>Salle</th>
-                <th>Température Minimum (°C)</th>
-                <th>Température Maximum (°C)</th>
-                <th>Température Moyenne (°C)</th>
-                <th>Humidité Minimum (%)</th>
-                <th>Humidité Maximum (%)</th>
-                <th>Humidité Moyenne (%)</th>
-                <th>CO2 Minimum (ppm)</th>
-                <th>CO2 Maximum (ppm)</th>
-                <th>CO2 Moyenne (ppm)</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Row for room E001 -->
-            <tr>
-                <td>E001</td>
-                <td id="temp_min_E001"></td>
-                <td id="temp_max_E001"></td>
-                <td id="temp_moy_E001"></td>
-                <td id="hum_min_E001"></td>
-                <td id="hum_max_E001"></td>
-                <td id="hum_moy_E001"></td>
-                <td id="co2_min_E001"></td>
-                <td id="co2_max_E001"></td>
-                <td id="co2_moy_E001"></td>
-            </tr>
-            <!-- Row for room E007 -->
-            <tr>
-                <td>E007</td>
-                <td id="temp_min_E007"></td>
-                <td id="temp_max_E007"></td>
-                <td id="temp_moy_E007"></td>
-                <td id="hum_min_E007"></td>
-                <td id="hum_max_E007"></td>
-                <td id="hum_moy_E007"></td>
-                <td id="co2_min_E007"></td>
-                <td id="co2_max_E007"></td>
-                <td id="co2_moy_E007"></td>
-            </tr>
-        </tbody>
-    </table>
+    <thead>
+        <tr>
+            <th>Salle</th>
+            <th>Température Minimum (°C)</th>
+            <th>Température Maximum (°C)</th>
+            <th>Température Moyenne (°C)</th>
+            <th>Humidité Minimum (%)</th>
+            <th>Humidité Maximum (%)</th>
+            <th>Humidité Moyenne (%)</th>
+            <th>CO2 Minimum (ppm)</th>
+            <th>CO2 Maximum (ppm)</th>
+            <th>CO2 Moyenne (ppm)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+        $servername = "localhost";
+        $username = "tnunes";
+        $password = "motdepasse";
+        $dbname = "sae23";
 
+        try {
+            $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+            $rooms = ['E001', 'E007'];
 
- 
-    <h2>Salle E001</h2>
-    <div class="chart-container">
-        <div class="chart-item">
-            <canvas id="temp_E001" width="50vh" height="50vh"></canvas>
-        </div>
-        <div class="chart-item">
-            <canvas id="hum_E001" width="50vh" height="50vh"></canvas>
-        </div>
-        <div class="chart-item">
-            <canvas id="co2_E001" width="50vh" height="50vh"></canvas>
-        </div>
-    </div>
+            foreach ($rooms as $room) {
+                $stmt = $conn->prepare("
+                    SELECT 
+                        MIN(CASE WHEN Capteur.type = 'temperature' THEN mesure.mesure END) AS temp_min,
+                        MAX(CASE WHEN Capteur.type = 'temperature' THEN mesure.mesure END) AS temp_max,
+                        AVG(CASE WHEN Capteur.type = 'temperature' THEN mesure.mesure END) AS temp_avg,
+                        MIN(CASE WHEN Capteur.type = 'humidity' THEN mesure.mesure END) AS hum_min,
+                        MAX(CASE WHEN Capteur.type = 'humidity' THEN mesure.mesure END) AS hum_max,
+                        AVG(CASE WHEN Capteur.type = 'humidity' THEN mesure.mesure END) AS hum_avg,
+                        MIN(CASE WHEN Capteur.type = 'co2' THEN mesure.mesure END) AS co2_min,
+                        MAX(CASE WHEN Capteur.type = 'co2' THEN mesure.mesure END) AS co2_max,
+                        AVG(CASE WHEN Capteur.type = 'co2' THEN mesure.mesure END) AS co2_avg
+                    FROM mesure
+                    JOIN Capteur ON mesure.capteur_ID = Capteur.capteur_ID
+                    JOIN Salle ON Capteur.Salle_ID = Salle.Salle_ID
+                    WHERE Salle.nom = :room
+                ");
+                $stmt->bindParam(':room', $room);
+                $stmt->execute();
+                $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    <h2>Salle E007</h2>
-    <div class="chart-container">
-        <div class="chart-item">
-            <canvas id="temp_E007" width="50vh" height="50vh"></canvas>
-        </div>
-        <div class="chart-item">
-            <canvas id="hum_E007" width="50vh" height="50vh"></canvas>
-        </div>
-        <div class="chart-item">
-            <canvas id="co2_E007" width="50vh" height="50vh"></canvas>
-        </div>
-    </div>
+                echo "<tr>";
+                echo "<td>{$room}</td>";
+                echo "<td>" . round($result['temp_min'], 2) . "</td>";
+                echo "<td>" . round($result['temp_max'], 2) . "</td>";
+                echo "<td>" . round($result['temp_avg'], 2) . "</td>";
+                echo "<td>" . round($result['hum_min'], 2) . "</td>";
+                echo "<td>" . round($result['hum_max'], 2) . "</td>";
+                echo "<td>" . round($result['hum_avg'], 2) . "</td>";
+                echo "<td>" . round($result['co2_min'], 2) . "</td>";
+                echo "<td>" . round($result['co2_max'], 2) . "</td>";
+                echo "<td>" . round($result['co2_avg'], 2) . "</td>";
+                echo "</tr>";
+            }
+        } catch (PDOException $e) {
+            echo "Error: " . $e->getMessage();
+        }
+        $conn = null; // Close the database connection
+        ?>
+    </tbody>
+</table>
 
-
-    <!-- <script src="search.js"></script> -->
-    
-    <footer>
-        <p>
-            <!-- W3C validation links for CSS and HTML -->
+<footer>
+    <p>
         <a href="METTRE LIEN" style="float: left;"><img src="images/vcss-blue.png" alt="css" /></a>
         <a href="METTRE LIEN" style="float: left;"><img src="images/html.png" alt="html" style="height: 30px; width: 90px;" /></a>
         <a href="https://www.iut-blagnac.fr/fr/" style="text-decoration: none; color: aqua;">IUT Blagnac</a> | <a href="https://dupratmatteo.com" style="text-decoration: none; color: aqua;">LAVIALLE</a> | <a style="text-decoration: none; color: aqua;">NUNES DIAS</a> | <a style="text-decoration: none; color: aqua;">REYNAUD</a> | <a style="text-decoration: none; color: aqua;">LOPEZ</a>
-            </p>
-            </footer>
-    <script src="charts.js"></script>
+    </p>
+</footer>
 </body>
 </html>
+

@@ -1,18 +1,17 @@
 <?php
 session_start();
 $servername = "localhost";
-		$username = "tnunes";
-		$password = "motdepasse";
-		$dbname = "sae23";
+$username = "tnunes";
+$password = "motdepasse";
+$dbname = "sae23";
 
-		// Create a connection to SQL database
-		$conn = new mysqli($servername, $username, $password, $dbname);
+// Create a connection to SQL database
+$conn = new mysqli($servername, $username, $password, $dbname);
 
-		if ($conn->connect_error) {
-			die("Connexion echouee: " . $conn->connect_error);
-		}
-		
- ?>
+if ($conn->connect_error) {
+    die("Connexion échouée: " . $conn->connect_error);
+}
+?>
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -31,12 +30,11 @@ $servername = "localhost";
         <nav>
             <ul>
                 <li><div class="item"><a href="index.php">Accueil</a></div></li>
-            	<li><div class="item"><a href="pres_sae.html">Gestion de projet</a></div></li>
-				<li><div class="item"><a href="consultation.php">Consultation</a></div></li>
+                <li><div class="item"><a href="pres_sae.html">Gestion de projet</a></div></li>
+                <li><div class="item"><a href="consultation.php">Consultation</a></div></li>
                 <li><div class="item"><a href="batiment1.php">R&T</a></div></li>
                 <li><div class="item"><a href="batiment2.php">GIM</a></div></li>
-                <li><div class="item"><a href="CDC.php">Cahier des charges</a></div></li>
-		<?php if ($_SESSION['role'] == 'administrateur'): ?>
+                <?php if ($_SESSION['role'] == 'administrateur'): ?>
                     <li><div class="item"><a href="index2.php">AJout/Supp</a></div></li>
                 <?php endif; ?>
                 <?php if (isset($_SESSION['user_id'])): ?>
@@ -48,191 +46,107 @@ $servername = "localhost";
         </nav>
     </header>
 <body>
-	<div class="container">
-		<h2>Ajouter un Bâtiment </h2>
-		<form action="./batiment.php" method="POST">
-		
-			<input type="hidden" name="action" value="add_batiment">
-			
-			<label for="bat_id">Nom:</label>
-			<input type="text" id="bat_id" name="bat_id" required>
+    <div class="container">
+        <h2>Ajouter un Bâtiment</h2>
+        <form action="batiment.php" method="POST">
+            <input type="hidden" name="action" value="add_building">
+            
+            <label for="nom">Nom:</label>
+            <input type="text" id="nom" name="nom" required>
 
-			<select name="gest_id" id="gest_id">
+            <label for="gest_ID">Gestionnaire:</label>
+            <select name="gest_ID" id="gest_ID" required>
+                <option value="">--Please choose an option--</option>
+                <?php
+                $req = "SELECT * FROM `Gestionnaire`";
+                $res = $conn->query($req);
+                if ($res != false && $res->num_rows > 0) {
+                    while ($row = $res->fetch_assoc()) {
+                        echo "<option value=\"" . htmlspecialchars($row['id_gestionnaire']) . "\">" . htmlspecialchars($row['login']) . "</option>";
+                    }
+                }
+                ?>
+            </select>
+            <button type="submit">Ajouter</button>
+        </form>
+    </div>
 
-				<option value="">--Please choose an option--</option>
-					<?php
+    <div class="container">
+        <h2>Supprimer un Bâtiment</h2>
+        <form action="batiment.php" method="POST">
+            <input type="hidden" name="action" value="delete_building">
+            
+            <label for="nom">Nom:</label>
+            <select name="nom" id="nom" required>
+                <option value="">--Please choose an option--</option>
+                <?php
+                $req = "SELECT * FROM `Batiment`";
+                $res = $conn->query($req);
+                if ($res != false && $res->num_rows > 0) {
+                    while ($row = $res->fetch_assoc()) {
+                        echo "<option value=\"" . htmlspecialchars($row['nom']) . "\">" . htmlspecialchars($row['nom']) . "</option>";
+                    }
+                }
+                ?>
+            </select>
+            <button type="submit">Supprimer</button>
+        </form>
+    </div>
 
-				$req = "SELECT * FROM `Gestionnaire` WHERE 1;";
-				$res = $conn->query($req);
+    <div class="container">
+        <h2>Ajouter un Capteur</h2>
+        <form action="salle.php" method="POST">
+            <input type="hidden" name="action" value="add_capteur">
+            
+            <label for="salle_id">Salle:</label>
+            <select name="salle_id" id="salle_id" required>
+                <option value="">--Please choose an option--</option>
+                <?php
+                $req = "SELECT * FROM `Salle`";
+                $res = $conn->query($req);
+                if ($res != false && $res->num_rows > 0) {
+                    while ($row = $res->fetch_assoc()) {
+                        echo "<option value=\"" . htmlspecialchars($row['Salle_ID']) . "\">" . htmlspecialchars($row['nom']) . "</option>";
+                    }
+                }
+                ?>
+            </select>
+            
+            <label for="type">Type:</label>
+            <input type="text" id="type" name="type" required>
+            
+            <label for="unite">Unité:</label>
+            <input type="text" id="unite" name="unite" required>
+            
+            <button type="submit">Ajouter</button>
+        </form>
+    </div>
 
-
-				$gestionnaires = [];
-				if ($res != false && $res->num_rows > 0) {
-				while ($row = $res->fetch_assoc()) {
-					$gestionnaires[] = $row;
-				}
-				}
-
-
-
-				foreach ($gestionnaires as $gestionnaire) {
-				echo "<option value=\"" . htmlspecialchars($gestionnaire['id_gestionnaire']) . "\">" . htmlspecialchars($gestionnaire['login']) . "</option>";
-				}
-				?>
-			</select>
-
-
-
-
-			<button type="submit">Ajouter</button>
-		</form>
-	</div>
-
-
-
-
-
-
-
-
-
-	<div class="container">
-		<h2>Supprimer un Bâtiment </h2>
-		<form action="./batiment.php" method="POST">
-		
-			<input type="hidden" name="action" value="delete_batiment">
-			
-			<select name="bat_id" id="bat_id">
-
-				<option value="">--Please choose an option--</option>
-					<?php
-
-				$req = "SELECT * FROM `batiment` WHERE 1;";
-				$res = $conn->query($req);
-
-
-				$batiments = [];
-				if ($res != false && $res->num_rows > 0) {
-				while ($row = $res->fetch_assoc()) {
-					$batiments[] = $row;
-				}
-				}
-
-
-
-				foreach ($batiments as $batiment) {
-				echo "<option value=\"" . htmlspecialchars($batiment['id_batiment']) . "\">" . htmlspecialchars($batiment['nom']) . "</option>";
-				}
-				?>
-			</select>
-			
-			<button type="submit">Supprimer</button>
-		</form>
-	</div>
-	
-
-
-
-
-
-
-	<div class="container">
-		<h2>Ajouter une Salle </h2>
-		<form action="./salle.php" method="POST">
-		
-			<input type="hidden" name="action" value="add_salle">
-			
-			<label for="bat_id">Batiment:</label>
-			<select name="bat_id" id="bat_id">
-			<option value="">--Please choose an option--</option>
-					
-					
-					
-					<?php
-			
-			$req = "SELECT * FROM `batiment` WHERE 1;";
-			$res = $conn->query($req);
-			
-			
-			$batiments = [];
-			if ($res != false && $res->num_rows > 0) {
-				while ($row = $res->fetch_assoc()) {
-					$batiments[] = $row;
-				}
-			}
-
-			
-			
-			foreach ($batiments as $batiment) {
-			echo "<option value=\"" . htmlspecialchars($batiment['id_batiment']) . "\">" . htmlspecialchars($batiment['nom']) . "</option>";
-			}
-			?>
-
-
-
-			</select>
-			
-			<label for="name">Nom:</label>*
-			<input type="text" id="name" name="name" required>
-			
-			<label for="type">Type:</label>
-			<input type="text" id="type" name="type" required>
-			
-			<label for="capacite">Capacité:</label>
-			<input type="text" id="capacity" name="capacity" required>
-			
-			<button type="submit">Ajouter</button>
-		</form>
-	</div>
-
-
-
-
-
-
-
-
-	<div class="container">
-		<h2>Supprimer une Salle </h2>
-		<form action="./salle.php" method="POST">
-		
-			<input type="hidden" name="action" value="delete_salle">
-			
-			<label for="id">ID:</label>
-			<!-- <input type="number" id="id" name="id" required> !-->
-			<select name="id" id="id">
-
-			<option value="">--Please choose an option--</option>
-
-					<?php
-			
-			$req = "SELECT * FROM `salle` WHERE 1;";
-			$res = $conn->query($req);
-			
-			
-			$salles = [];
-			if ($res != false && $res->num_rows > 0) {
-				while ($row = $res->fetch_assoc()) {
-					$salles[] = $row;
-				}
-			}
-			
-
-			
-			foreach ($salles as $salle) {
-			echo "<option value=\"" . htmlspecialchars($salle['id_salle']) . "\">" . htmlspecialchars($salle['nom']) . "</option>";
-			}
-			?>
-			</select>
-			<button type="submit">Supprimer</button>
-		</form>
-	</div>
+    <div class="container">
+        <h2>Supprimer un Capteur</h2>
+        <form action="salle.php" method="POST">
+            <input type="hidden" name="action" value="delete_capteur">
+            
+            <label for="capteur_id">Capteur:</label>
+            <select name="capteur_id" id="capteur_id" required>
+                <option value="">--Please choose an option--</option>
+                <?php
+                $req = "SELECT * FROM `Capteur`";
+                $res = $conn->query($req);
+                if ($res != false && $res->num_rows > 0) {
+                    while ($row = $res->fetch_assoc()) {
+                        echo "<option value=\"" . htmlspecialchars($row['capteur_ID']) . "\">" . htmlspecialchars($row['type']) . " (" . htmlspecialchars($row['unite']) . ")</option>";
+                    }
+                }
+                ?>
+            </select>
+            <button type="submit">Supprimer</button>
+        </form>
+    </div>
 </body>
 </html>
 
-
 <?php 
 $conn->close();
-		
-
 ?>
+

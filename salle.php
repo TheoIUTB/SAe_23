@@ -1,5 +1,5 @@
 <?php
-// File: salle.php
+// File: capteur.php
 
 // Database configuration
 $servername = "localhost";
@@ -18,35 +18,35 @@ if ($conn->connect_error) {
 // Check which action was requested
 $action = $_POST['action'];
 
-if ($action == "add_salle") {
+if ($action == "add_capteur") {
     // Retrieve form data
-    $name = $_POST['name'];
     $type = $_POST['type'];
-    $capacity = $_POST['capacity'];
-    $bat_id = $_POST['bat_id'];
+    $unite = $_POST['unite'];
+    $salle_id = $_POST['salle_id'];
 
     // Prepare and execute the insertion query
-    $sql = "INSERT INTO salle (nom, type, capacite, batiment_id) VALUES ('$name', '$type', $capacity, $bat_id)";
+    $sql = "INSERT INTO Capteur (type, unite, Salle_ID) VALUES ('$type', '$unite', $salle_id)";
     if ($conn->query($sql) === TRUE) {
-        echo "New entry added successfully";
+        echo "New capteur added successfully";
     } else {
-        echo "Error: ";
+        echo "Error: " . $conn->error;
     }
 
-} elseif ($action == "delete_salle") {
+} elseif ($action == "delete_capteur") {
     // Retrieve the ID from the form
-    $id = $_POST['id'];
+    $capteur_id = $_POST['capteur_id'];
 
     // Prepare and execute the deletion query
-    $sql = "DELETE FROM salle WHERE id_salle=$id";
+    $sql = "DELETE FROM Capteur WHERE capteur_ID=$capteur_id";
     if ($conn->query($sql) === TRUE) {
-        echo "Entry deleted successfully";
+        echo "Capteur deleted successfully";
     } else {
-        echo "Error: ";
+        echo "Error: " . $conn->error;
     }
 }
 
 header('Location: index2.php'); // Redirect to the index2.php page
 // Close the connection
-mysqli_close($conn);
+$conn->close();
 ?>
+
